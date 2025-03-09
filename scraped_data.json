@@ -1,0 +1,76 @@
+[
+    {
+        "title": "Mountain Cams \u2013 Kimberley Alpine Resort",
+        "snow_report": {},
+        "images": [
+            "<a href=\"https://skikimberley.com/conditions/mountain-cam//wp-content/themes/kallyas-child/img/icon-webcam-22X25.png\" target=\"_blank\"><img src=\"https://skikimberley.com/conditions/mountain-cam//wp-content/themes/kallyas-child/img/icon-webcam-22X25.png\" alt=\"Image\"></a>",
+            "<a href=\"http://secure.skircr.com/cams2/kmcam1/kmcam1.jpg\" target=\"_blank\"><img src=\"http://secure.skircr.com/cams2/kmcam1/kmcam1.jpg\" alt=\"Image\"></a>",
+            "<a href=\"http://secure.skircr.com/cams2/kmcam1/kmcam1.jpg\" target=\"_blank\"><img src=\"http://secure.skircr.com/cams2/kmcam1/kmcam1.jpg\" alt=\"Image\"></a>",
+            "<a href=\"http://secure.skircr.com/cams2/kmcam3/kmcam3.jpg\" target=\"_blank\"><img src=\"http://secure.skircr.com/cams2/kmcam3/kmcam3.jpg\" alt=\"Image\"></a>",
+            "<a href=\"http://secure.skircr.com/cams2/kmcam4/final.jpg\" target=\"_blank\"><img src=\"http://secure.skircr.com/cams2/kmcam4/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"http://secure.skircr.com/cams2/kmcam2/kmcam2.jpg\" target=\"_blank\"><img src=\"http://secure.skircr.com/cams2/kmcam2/kmcam2.jpg\" alt=\"Image\"></a>"
+        ],
+        "resort_name": "Kimberley"
+    },
+    {
+        "title": "Snow & Weather Conditions | Whitewater Ski Resort",
+        "snow_report": {
+            "24hr": "0",
+            "48hr": "1",
+            "3 Days": "2",
+            "7 Days": "12",
+            "Total Snowfall": "410",
+            "Current Base": "167",
+            "high": "-8",
+            "Wind - S": "5",
+            "low": "-11",
+            "snow": "7"
+        },
+        "images": [
+            "<a href=\"https://webcams.skiwhitewater.com/webcams/lodge/current.jpg\" target=\"_blank\"><img src=\"https://webcams.skiwhitewater.com/webcams/lodge/current.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://webcams.skiwhitewater.com/webcams/summit/current.jpg\" target=\"_blank\"><img src=\"https://webcams.skiwhitewater.com/webcams/summit/current.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://webcams.skiwhitewater.com/webcams/glory/current.jpg\" target=\"_blank\"><img src=\"https://webcams.skiwhitewater.com/webcams/glory/current.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://webcams.skiwhitewater.com/webcams/weatherstick/current.jpg\" target=\"_blank\"><img src=\"https://webcams.skiwhitewater.com/webcams/weatherstick/current.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://webcams.skiwhitewater.com/webcams/raven/current.jpg\" target=\"_blank\"><img src=\"https://webcams.skiwhitewater.com/webcams/raven/current.jpg\" alt=\"Image\"></a>"
+        ],
+        "resort_name": "Whitewater"
+    },
+    {
+        "title": "Snow Report | Revelstoke Mountain Resort | British Columbia, Canada",
+        "snow_report": {},
+        "images": [
+            "<a href=\"https://www.revelstokemountainresort.com/uploads/gnorm/gnorm-small.jpg?1736267198\" target=\"_blank\"><img src=\"https://www.revelstokemountainresort.com/uploads/gnorm/gnorm-small.jpg?1736267198\" alt=\"Image\"></a>",
+            "<a href=\"https://www.revelstokemountainresort.com/mountain/conditions/snow-report//site/assets/files/9473/gnorm.450x306.webp\" target=\"_blank\"><img src=\"https://www.revelstokemountainresort.com/mountain/conditions/snow-report//site/assets/files/9473/gnorm.450x306.webp\" alt=\"Image\"></a>"
+        ],
+        "resort_name": "Revelstoke"
+    },
+    {
+        "title": "Mountain Cams \u2013 Fernie Alpine Resort",
+        "snow_report": {},
+        "images": [
+            "<a href=\"https://skifernie.com/conditions/mountain-cam//wp-content/themes/kallyas-child/img/icon-webcam-22X25.png\" target=\"_blank\"><img src=\"https://skifernie.com/conditions/mountain-cam//wp-content/themes/kallyas-child/img/icon-webcam-22X25.png\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/fecam2/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/fecam2/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/fecam6/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/fecam6/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/fecam1/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/fecam1/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/fecam8/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/fecam8/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/fecam11/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/fecam11/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/fecam7/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/fecam7/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/fecam2/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/fecam2/final.jpg\" alt=\"Image\"></a>"
+        ],
+        "resort_name": "Fernie"
+    },
+    {
+        "title": "Mountain Cam \u2013 Kicking Horse Mountain Resort",
+        "snow_report": {},
+        "images": [
+            "<a href=\"https://kickinghorseresort.com/conditions/mountain-cam//wp-content/themes/kallyas-child/img/icon-webcam-22X25.png\" target=\"_blank\"><img src=\"https://kickinghorseresort.com/conditions/mountain-cam//wp-content/themes/kallyas-child/img/icon-webcam-22X25.png\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/khcam5/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/khcam5/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/khcam6/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/khcam6/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/khcam3/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/khcam3/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/khcam4/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/khcam4/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/khcam2/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/khcam2/final.jpg\" alt=\"Image\"></a>",
+            "<a href=\"https://secure.skircr.com/cams2/khcam1/final.jpg\" target=\"_blank\"><img src=\"https://secure.skircr.com/cams2/khcam1/final.jpg\" alt=\"Image\"></a>"
+        ],
+        "resort_name": "Kicking Horse"
+    }
+]
