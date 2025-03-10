@@ -15,11 +15,22 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # Adjust Python version if needed
+          python-version: '3.x'
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt || echo "No requirements file found"
+          pip install -r requirements.txt  # This will install all dependencies listed in requirements.txt
+          
+      - name: Install Chrome and ChromeDriver
+        run: |
+          sudo apt update
+          sudo apt install -y google-chrome-stable
+          CHROMEDRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
+          wget -N https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          chromedriver --version
 
       - name: Run Python script
         run: python scrapertest.py
+      
