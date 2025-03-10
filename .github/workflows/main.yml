@@ -1,0 +1,27 @@
+name: Run Python Script
+
+on:
+  push:  # Runs the script when you push new code
+  schedule:
+    - cron: "0 * * * *"  # Runs every hour
+  workflow_dispatch:  # Allows manual execution
+
+jobs:
+  run-python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Adjust Python version
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt  # Install required packages (if any)
+
+      - name: Run Python script
+        run: scrapertest.py  # Replace with your script name
