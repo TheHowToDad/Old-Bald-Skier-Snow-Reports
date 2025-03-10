@@ -1,9 +1,7 @@
 name: Run Python Script
 
 on:
-  push:  # Runs the script when you push new code
-  schedule:
-    - cron: "0 * * * *"  # Runs every hour
+  push:
   workflow_dispatch:  # Allows manual execution
 
 jobs:
@@ -17,7 +15,11 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # Adjust Python version
+          python-version: '3.x'  # Adjust Python version if needed
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || echo "No requirements file found"
 
       - name: Run Python script
-        run: python scrapertest.py  # Replace with your script name
+        run: python scrapertest.py
