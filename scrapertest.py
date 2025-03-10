@@ -151,7 +151,7 @@ fernie_snow_report = get_fernie_snow_report()
 revelstoke_snow_report = get_revelstoke_snow_report()
 
 # Generate the HTML file with updated dark mode styles, blue accents, and improved visuals
-with open('display_images_and_report.html', 'w') as html_file:
+with open('index.html', 'w') as html_file:
     html_file.write('<html><head><style>\n')
 
     # Dark mode styles with modern touches
