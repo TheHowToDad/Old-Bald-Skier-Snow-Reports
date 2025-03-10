@@ -20,4 +20,4 @@ jobs:
           python-version: '3.x'  # Adjust Python version
 
       - name: Run Python script
-        run: scrapertest.py  # Replace with your script name
+        run: python scrapertest.py  # Replace with your script name
