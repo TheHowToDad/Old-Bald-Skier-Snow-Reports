@@ -4,7 +4,7 @@ on:
   push:
   workflow_dispatch:  # Allows manual execution
   schedule:
-    - cron: '0 * * * *'  # Runs every hour
+    - cron: '0 * * * *'  # This runs the workflow once every hour on the hour
 
 permissions:
   contents: write  # Grants permission to push changes
@@ -49,4 +49,3 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add index.html
           git diff --cached --quiet || (git commit -m "Auto-update index.html" && git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git HEAD:main)
-
