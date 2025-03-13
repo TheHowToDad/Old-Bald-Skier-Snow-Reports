@@ -39,7 +39,7 @@ if images:
     
     if image_response.status_code == 200:
         # Save the image to GitHub workspace
-        save_path = "/home/runner/work/TheHowToDad/Old-Bald-Skier-Snow-Reports/Old-Bald-Skier-Snow-Reports/current.jpg"
+        save_path = os.path.join(os.getcwd(), "current.jpg")
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         
         with open(save_path, "wb") as file:
