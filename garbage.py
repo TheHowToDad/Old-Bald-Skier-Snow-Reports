@@ -38,34 +38,36 @@ if images:
     image_response = requests.get(image_url)
     
     if image_response.status_code == 200:
-        # Save the image inside the GitHub runner workspace
+        # Debugging: Print the current working directory
+        print(f"Current working directory: {os.getcwd()}")
+
+        # Save the image to the GitHub workspace
         save_path = os.path.join(os.getcwd(), "current.jpg")
-        
+        print(f"Saving image to: {save_path}")
+
+        # Create directories if necessary
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
+        # Save the image
         with open(save_path, "wb") as file:
             file.write(image_response.content)
         print(f"Image saved to {save_path}")
 
-        # Debugging: Check if file exists
+        # Check if the file exists before committing
         if os.path.exists(save_path):
-            print("File saved successfully, preparing to commit.")
+            print(f"File {save_path} exists, ready to commit.")
 
-            # Configure Git inside GitHub Actions
-            subprocess.run(["git", "config", "--global", "user.name", "github-actions"])
-            subprocess.run(["git", "config", "--global", "user.email", "actions@github.com"])
-            subprocess.run(["git", "config", "--global", "credential.helper", "store"])
-
-            # Add, commit, and push the file
-            subprocess.run(["git", "add", "current.jpg"])
+            # Git commit and push
+            subprocess.run(["git", "add", save_path])
             subprocess.run(["git", "commit", "-m", "Updated Vosker image"])
             subprocess.run(["git", "push", "origin", "main"])  # Change 'main' if using another branch
-            print("File committed and pushed to GitHub successfully.")
-
         else:
-            print("File was not saved! Check the path.")
+            print(f"File {save_path} not found after saving.")
     else:
-        print("Failed to download the image")
+        print("Failed to download the image.")
 else:
     print("No .jpg image found.")
 
 # Close the browser
 driver.quit()
+
