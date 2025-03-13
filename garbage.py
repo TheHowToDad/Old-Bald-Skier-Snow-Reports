@@ -41,7 +41,7 @@ if images:
         # Debugging: Print the current working directory
         print(f"Current working directory: {os.getcwd()}")
 
-        # Save the image to the GitHub workspace
+        # Set the save path relative to GitHub Actions workspace
         save_path = os.path.join(os.getcwd(), "current.jpg")
         print(f"Saving image to: {save_path}")
 
@@ -67,6 +67,9 @@ if images:
         print("Failed to download the image.")
 else:
     print("No .jpg image found.")
+
+# Close the browser
+driver.quit()
 
 # Close the browser
 driver.quit()
