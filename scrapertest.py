@@ -253,6 +253,10 @@ with open('index.html', 'w') as html_file:
                 if resort_name == "Kimberley":
                     html_file.write(f'<a class="snow-forecast-link" href="https://weather.gc.ca/?layers=,radar&center=49.44729681,-115.70753362&zoom=-1" target="_blank">Weather Radar</a>\n')
 
+                if resort_name == "Fernie":
+                    html_file.write(f'<a class="snow-forecast-link" href="https://skifernie.com/conditions/alpine-weather/" target="_blank">Mountain Weather</a>\n')
+
+
                 html_file.write(f'</span></p>\n')
 
                 # Add images
