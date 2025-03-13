@@ -38,19 +38,30 @@ if images:
     image_response = requests.get(image_url)
     
     if image_response.status_code == 200:
-        # Save the image to GitHub workspace
+        # Save the image inside the GitHub runner workspace
         save_path = os.path.join(os.getcwd(), "current.jpg")
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
         
         with open(save_path, "wb") as file:
             file.write(image_response.content)
         print(f"Image saved to {save_path}")
 
-        # Commit and push the image to GitHub
-        subprocess.run(["git", "add", save_path])
-        subprocess.run(["git", "commit", "-m", "Updated Vosker image"])
-        subprocess.run(["git", "push", "origin", "main"])  # Change 'main' if using another branch
-        
+        # Debugging: Check if file exists
+        if os.path.exists(save_path):
+            print("File saved successfully, preparing to commit.")
+
+            # Configure Git inside GitHub Actions
+            subprocess.run(["git", "config", "--global", "user.name", "github-actions"])
+            subprocess.run(["git", "config", "--global", "user.email", "actions@github.com"])
+            subprocess.run(["git", "config", "--global", "credential.helper", "store"])
+
+            # Add, commit, and push the file
+            subprocess.run(["git", "add", "current.jpg"])
+            subprocess.run(["git", "commit", "-m", "Updated Vosker image"])
+            subprocess.run(["git", "push", "origin", "main"])  # Change 'main' if using another branch
+            print("File committed and pushed to GitHub successfully.")
+
+        else:
+            print("File was not saved! Check the path.")
     else:
         print("Failed to download the image")
 else:
