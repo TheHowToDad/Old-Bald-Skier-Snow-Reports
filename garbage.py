@@ -10,7 +10,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 # Set up the Chrome WebDriver
 options = webdriver.ChromeOptions()
-options.headless = False  # Set to True if you don't need the browser UI
+options.headless = True  # Set to True for headless execution in GitHub Actions
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 # Open the Vosker login page
@@ -20,7 +20,7 @@ driver.get("https://webapp.vosker.com/")
 email_elem = driver.find_element(By.ID, "email")
 password_elem = driver.find_element(By.ID, "password")
 email_elem.send_keys("sendtoblake@gmail.com")  # Replace with your email
-password_elem.send_keys("1Keepitreal!")        # Replace with your password
+password_elem.send_keys("Y1Keepitreal!")  # Replace with your password
 password_elem.send_keys(Keys.RETURN)
 
 # Wait for the page to load after login
@@ -38,15 +38,8 @@ if images:
     image_response = requests.get(image_url)
     
     if image_response.status_code == 200:
-        # Debugging: Print the current working directory
-        print(f"Current working directory: {os.getcwd()}")
-
-        # Set the save path relative to the GitHub folder
-        # Assuming you're saving to a folder called 'images' within your repo
+        # Set the save path relative to the GitHub repo
         save_path = os.path.join(os.getcwd(), "images", "current.jpg")
-        print(f"Saving image to: {save_path}")
-
-        # Create directories if necessary
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
         # Save the image
@@ -54,16 +47,12 @@ if images:
             file.write(image_response.content)
         print(f"Image saved to {save_path}")
 
-        # Check if the file exists before committing
-        if os.path.exists(save_path):
-            print(f"File {save_path} exists, ready to commit.")
-
-            # Git commit and push
-            subprocess.run(["git", "add", save_path])
-            subprocess.run(["git", "commit", "-m", "Updated Vosker image"])
-            subprocess.run(["git", "push", "origin", "main"])  # Change 'main' if using another branch
-        else:
-            print(f"File {save_path} not found after saving.")
+        # GitHub Actions commit and push
+        subprocess.run(["git", "config", "--global", "user.name", "GitHub Actions"])
+        subprocess.run(["git", "config", "--global", "user.email", "actions@github.com"])
+        subprocess.run(["git", "add", save_path])
+        subprocess.run(["git", "commit", "-m", "Updated Vosker image"], check=True)
+        subprocess.run(["git", "push"], check=True)
     else:
         print("Failed to download the image.")
 else:
