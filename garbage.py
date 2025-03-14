@@ -1,12 +1,12 @@
+import os
+import requests
+import subprocess
+import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-import time
-import os
-import requests
-import subprocess
 
 # Set up the Chrome WebDriver
 options = webdriver.ChromeOptions()
@@ -41,8 +41,9 @@ if images:
         # Debugging: Print the current working directory
         print(f"Current working directory: {os.getcwd()}")
 
-        # Set the save path relative to GitHub Actions workspace
-        save_path = os.path.join(os.getcwd(), "current.jpg")
+        # Set the save path relative to the GitHub folder
+        # Assuming you're saving to a folder called 'images' within your repo
+        save_path = os.path.join(os.getcwd(), "images", "current.jpg")
         print(f"Saving image to: {save_path}")
 
         # Create directories if necessary
@@ -70,7 +71,3 @@ else:
 
 # Close the browser
 driver.quit()
-
-# Close the browser
-driver.quit()
-
