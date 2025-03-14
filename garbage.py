@@ -20,7 +20,7 @@ driver.get("https://webapp.vosker.com/")
 email_elem = driver.find_element(By.ID, "email")
 password_elem = driver.find_element(By.ID, "password")
 email_elem.send_keys("sendtoblake@gmail.com")  # Replace with your email
-password_elem.send_keys("Y1Keepitreal!")  # Replace with your password
+password_elem.send_keys("1Keepitreal!")  # Replace with your password
 password_elem.send_keys(Keys.RETURN)
 
 # Wait for the page to load after login
