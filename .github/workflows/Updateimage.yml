@@ -3,22 +3,35 @@ name: Update Vosker Image
 on:
   schedule:
     - cron: '0 * * * *'  # Runs every hour
-  workflow_dispatch:  # Allows manual trigger
+  workflow_dispatch:  # Allows manual execution from GitHub Actions UI
 
 jobs:
   update-image:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # ✅ REQUIRED to push changes to the repo
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install selenium requests
-
-      - name: Install Chromium
-        run: sudo apt-get install -y chromium-browser
+        run: pip install selenium requests webdriver-manager
 
       - name: Run script
         run: python garbage.py
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add current.jpg
+          git commit -m "Updated Vosker image" || echo "No changes to commit"
+          git push origin main
