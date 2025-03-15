@@ -21,6 +21,6 @@ jobs:
         run: pip install selenium webdriver-manager requests
 
       - name: Run script
-        run: python your_script.py
+        run: garbage.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub authentication token
