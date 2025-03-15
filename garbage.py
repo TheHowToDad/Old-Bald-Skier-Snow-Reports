@@ -5,15 +5,19 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 
 print("::notice::[DEBUG] Starting script execution...")
 
-# Set up the Chrome WebDriver (headless for GitHub Actions)
-options = webdriver.ChromeOptions()
-options.headless = True  
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+# Set up Selenium WebDriver for GitHub Actions
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--headless")  # Run without UI
+chrome_options.add_argument("--no-sandbox")  # Required for GitHub Actions
+chrome_options.add_argument("--disable-dev-shm-usage")  # Prevents memory issues
+
+# Use GitHub Actions' preinstalled Chromium instead of downloading Chrome
+chrome_options.binary_location = "/usr/bin/google-chrome"
+
+driver = webdriver.Chrome(options=chrome_options)
 
 print("::notice::[DEBUG] WebDriver initialized. Logging into Vosker...")
 
@@ -23,8 +27,8 @@ driver.get("https://webapp.vosker.com/")
 # Locate the login elements and log in
 email_elem = driver.find_element(By.ID, "email")
 password_elem = driver.find_element(By.ID, "password")
-email_elem.send_keys("sentoblake@gmail.com")  # Replace with your email
-password_elem.send_keys("1Keepitreal!")  # Replace with your password
+email_elem.send_keys("YOUR_EMAIL")  # Replace with your email
+password_elem.send_keys("YOUR_PASSWORD")  # Replace with your password
 password_elem.send_keys(Keys.RETURN)
 
 # Wait for the page to load after login
@@ -70,3 +74,4 @@ else:
 
 # Close the browser
 driver.quit()
+
