@@ -2,7 +2,7 @@ name: Update Vosker Image
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Runs every hour (adjust as needed)
+    - cron: '0 * * * *'  # Runs every hour
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
@@ -12,15 +12,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
       - name: Install dependencies
-        run: pip install selenium webdriver-manager requests
+        run: pip install selenium requests
+
+      - name: Install Chromium
+        run: sudo apt-get install -y chromium-browser
 
       - name: Run script
         run: python garbage.py
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub authentication token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
