@@ -13,8 +13,6 @@ chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--headless")  # Run without UI
 chrome_options.add_argument("--no-sandbox")  # Required for GitHub Actions
 chrome_options.add_argument("--disable-dev-shm-usage")  # Prevents memory issues
-
-# Use GitHub Actions' preinstalled Chromium instead of downloading Chrome
 chrome_options.binary_location = "/usr/bin/google-chrome"
 
 driver = webdriver.Chrome(options=chrome_options)
@@ -27,8 +25,8 @@ driver.get("https://webapp.vosker.com/")
 # Locate the login elements and log in
 email_elem = driver.find_element(By.ID, "email")
 password_elem = driver.find_element(By.ID, "password")
-email_elem.send_keys("YOUR_EMAIL")  # Replace with your email
-password_elem.send_keys("YOUR_PASSWORD")  # Replace with your password
+email_elem.send_keys("sendtoblake@gmail.com")  # Replace with your email
+password_elem.send_keys("1Keepitreal!")  # Replace with your password
 password_elem.send_keys(Keys.RETURN)
 
 # Wait for the page to load after login
@@ -54,19 +52,25 @@ if images:
 
         print(f"::notice::[DEBUG] Image saved to {save_path}")
 
-        # Configure Git for GitHub Actions
-        subprocess.run(["git", "config", "--global", "user.name", "github-actions"])
-        subprocess.run(["git", "config", "--global", "user.email", "github-actions@github.com"])
+        # Verify file exists
+        if os.path.exists(save_path):
+            print("::notice::[DEBUG] Image file exists. Proceeding to commit.")
 
-        # Add and commit the image
-        subprocess.run(["git", "add", save_path])
-        subprocess.run(["git", "commit", "-m", "Updated Vosker image"], check=True)
+            # Configure Git
+            subprocess.run(["git", "config", "--global", "user.name", "github-actions"])
+            subprocess.run(["git", "config", "--global", "user.email", "github-actions@github.com"])
 
-        # Push changes using GitHub Token
-        repo_url = f"https://x-access-token:{os.getenv('GITHUB_TOKEN')}@github.com/TheHowToDad/Old-Bald-Skier-Snow-Reports.git"
-        subprocess.run(["git", "push", repo_url, "main"], check=True)
+            # Add, commit, and push the file
+            subprocess.run(["git", "add", "current.jpg"])
+            subprocess.run(["git", "commit", "-m", "Updated Vosker image"], check=True)
 
-        print("::notice::[DEBUG] Image committed and pushed successfully.")
+            # Push using GitHub token for authentication
+            repo_url = f"https://x-access-token:{os.getenv('GITHUB_TOKEN')}@github.com/TheHowToDad/Old-Bald-Skier-Snow-Reports.git"
+            subprocess.run(["git", "push", repo_url, "main"], check=True)
+
+            print("::notice::[DEBUG] Image committed and pushed successfully.")
+        else:
+            print("::error::Image was not saved correctly.")
     else:
         print("::error::Failed to download the image. HTTP Status:", image_response.status_code)
 else:
@@ -74,4 +78,3 @@ else:
 
 # Close the browser
 driver.quit()
-
