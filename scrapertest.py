@@ -281,8 +281,8 @@ with open('index.html', 'w') as html_file:
                 # Easter Chair link for Kimberley
                 if resort_name == 'Kimberley':
                     html_file.write('''
-        <div class="image-container" style="display: flex; justify-content: center; align-items: center; text-align: center;">
-            <img src="current.jpg" alt="Kimberley Current Image" style="width: 85%; max-width: 315px; height: auto; border-radius: 8px;">
+        <div style="text-align: center;">
+            <img src="current.jpg" alt="Kimberley Current Image" style="width: 85%; max-width: 315px; height: auto; border-radius: 8px; display: block; margin: 0 auto;">
         </div>
     ''')
         html_file.write('</div>\n')  # Close section div
