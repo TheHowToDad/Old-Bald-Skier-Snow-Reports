@@ -278,13 +278,17 @@ with open('index.html', 'w') as html_file:
                     image_count += 1
                 html_file.write('</div>\n')
 
-                # Easter Chair link for Kimberley
                 if resort_name == 'Kimberley':
                     html_file.write('''
         <div style="text-align: center;">
-            <img src="current.jpg" alt="Kimberley Current Image" style="width: 85%; max-width: 315px; height: auto; border-radius: 8px; display: block; margin: 15px auto 0;">
+            <a href="current.jpg" target="_blank">
+                <img src="current.jpg" alt="Kimberley Current Image" 
+                     style="width: 85%; max-width: 315px; height: auto; 
+                            border-radius: 8px; display: block; margin: 15px auto 0;">
+            </a>
         </div>
     ''')
+
         html_file.write('</div>\n')  # Close section div
 
 print("done")
