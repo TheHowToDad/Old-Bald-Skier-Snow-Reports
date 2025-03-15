@@ -280,7 +280,7 @@ with open('index.html', 'w') as html_file:
 
                 # Easter Chair link for Kimberley
                 if resort_name == 'Kimberley':
-                    html_file.write('<div class="image-container"><img src="current.jpg" alt="Kimberley Current Image"></div>\n')
+                    html_file.write('<div class="image-container"><img src="current.jpg" alt="Kimberley Current Image" style="width: 100%; max-width: 315px; height: auto; border-radius: 8px;"></div>\n')
 
         html_file.write('</div>\n')  # Close section div
 
