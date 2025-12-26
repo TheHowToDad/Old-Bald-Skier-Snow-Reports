@@ -1,0 +1,129 @@
+import sys
+import subprocess
+
+# =========================
+# AUTO-INSTALL PILLOW FIX
+# =========================
+try:
+    from PIL import Image
+except ModuleNotFoundError:
+    print("Pillow not found. Installing now...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
+    from PIL import Image
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+import requests
+import time
+import os
+
+# =========================
+# CONFIG
+# =========================
+EMAIL = "sendtoblake@gmail.com"
+PASSWORD = "1Keepitreal!"
+
+CAMERA_URL = "https://webapp.vosker.com/camera/65d3eca2f63c43f5f0684d8f"
+
+BASE_DIR = "vosker"
+IMAGE_DIR = os.path.join(BASE_DIR, "images")
+GIF_PATH = os.path.join(BASE_DIR, "vosker_timelapse.gif")
+
+MAX_IMAGES = 100
+GIF_LENGTH_SECONDS = 7
+
+# =========================
+# SETUP
+# =========================
+os.makedirs(IMAGE_DIR, exist_ok=True)
+
+options = webdriver.ChromeOptions()
+options.headless = False  # set True for headless
+
+driver = webdriver.Chrome(
+    service=Service(ChromeDriverManager().install()),
+    options=options
+)
+
+# =========================
+# LOGIN
+# =========================
+driver.get("https://webapp.vosker.com/login")
+time.sleep(3)
+
+driver.find_element(By.ID, "email").send_keys(EMAIL)
+driver.find_element(By.ID, "password").send_keys(PASSWORD + Keys.RETURN)
+
+time.sleep(8)
+
+# =========================
+# GO DIRECTLY TO CAMERA
+# =========================
+driver.get(CAMERA_URL)
+time.sleep(6)
+
+# =========================
+# LOAD IMAGE HISTORY (SCROLL)
+# =========================
+for _ in range(12):
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(2)
+
+# =========================
+# COLLECT IMAGE URLS
+# =========================
+images = driver.find_elements(By.XPATH, "//img[contains(@src, '.jpg')]")
+
+image_urls = []
+for img in images:
+    src = img.get_attribute("src")
+    if src and src not in image_urls:
+        image_urls.append(src)
+
+image_urls = image_urls[:MAX_IMAGES]
+
+print(f"Found {len(image_urls)} images")
+
+# =========================
+# DOWNLOAD IMAGES
+# =========================
+downloaded = []
+
+for i, url in enumerate(image_urls):
+    try:
+        r = requests.get(url, timeout=10)
+        if r.status_code == 200:
+            path = os.path.join(IMAGE_DIR, f"{i:03d}.jpg")
+            with open(path, "wb") as f:
+                f.write(r.content)
+            downloaded.append(path)
+            print(f"Downloaded {path}")
+    except Exception as e:
+        print(f"Failed to download {url}: {e}")
+
+driver.quit()
+
+# =========================
+# CREATE GIF
+# =========================
+if not downloaded:
+    print("No images downloaded — aborting GIF creation")
+    sys.exit(1)
+
+frames = [Image.open(img).convert("RGB") for img in downloaded]
+
+frame_duration_ms = int((GIF_LENGTH_SECONDS / len(frames)) * 1000)
+
+frames[0].save(
+    GIF_PATH,
+    save_all=True,
+    append_images=frames[1:],
+    duration=frame_duration_ms,
+    loop=0,
+    optimize=True
+)
+
+print(f"✅ GIF created successfully: {GIF_PATH}")
