@@ -5,16 +5,17 @@ from PIL import Image
 # ------------------------
 # CONFIG
 # ------------------------
+# Root directory in GitHub Actions or local
 ROOT_DIR = os.environ.get("GITHUB_WORKSPACE", ".")
 BASE_DIR = os.path.join(ROOT_DIR, "Old-Bald-Skier-Snow-Reports", "vosker")
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
 GIF_PATH = os.path.join(BASE_DIR, "vosker_timelapse.gif")
 
-# Make sure the directories exist
+# Ensure directories exist
 os.makedirs(IMAGE_DIR, exist_ok=True)
 print(f"Directory confirmed/created: {IMAGE_DIR}")
 
-# Replace these URLs with your actual Vosker image URLs
+# Replace with your actual Vosker image URLs
 IMAGE_URLS = [
     "https://via.placeholder.com/300x200.png?text=1",
     "https://via.placeholder.com/300x200.png?text=2",
@@ -25,18 +26,17 @@ IMAGE_URLS = [
 # DOWNLOAD IMAGES
 # ------------------------
 downloaded_files = []
-
 for i, url in enumerate(IMAGE_URLS):
     try:
-        response = requests.get(url, timeout=10)
-        if response.status_code == 200:
+        r = requests.get(url, timeout=10)
+        if r.status_code == 200:
             file_path = os.path.join(IMAGE_DIR, f"{i:03d}.jpg")
             with open(file_path, "wb") as f:
-                f.write(response.content)
+                f.write(r.content)
             downloaded_files.append(file_path)
             print(f"Downloaded image: {file_path}")
         else:
-            print(f"Failed to download {url}, status: {response.status_code}")
+            print(f"Failed to download {url}, status: {r.status_code}")
     except Exception as e:
         print(f"Error downloading {url}: {e}")
 
@@ -48,7 +48,7 @@ if not downloaded_files:
     exit(1)
 
 frames = [Image.open(f).convert("RGB") for f in downloaded_files]
-frame_duration_ms = 1000  # 1 second per frame, adjust as needed
+frame_duration_ms = 1000  # 1 second per frame
 
 frames[0].save(
     GIF_PATH,
@@ -61,5 +61,3 @@ frames[0].save(
 
 print(f"✅ GIF created successfully: {GIF_PATH}")
 print("Files in vosker directory:", os.listdir(BASE_DIR))
-
-
