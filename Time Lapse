@@ -62,3 +62,4 @@ frames[0].save(
 print(f"✅ GIF created successfully: {GIF_PATH}")
 print("Files in vosker directory:", os.listdir(BASE_DIR))
 
+
