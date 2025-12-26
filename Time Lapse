@@ -1,128 +1,54 @@
-import sys
-import subprocess
-import time
 import os
 import requests
+from PIL import Image
 
-# =========================
-# AUTO-INSTALL PILLOW FIX
-# =========================
-try:
-    from PIL import Image
-except ModuleNotFoundError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
-    from PIL import Image
-
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-
-# =========================
+# ------------------------
 # CONFIG
-# =========================
-EMAIL = os.environ["VOSKER_EMAIL"]
-PASSWORD = os.environ["VOSKER_PASSWORD"]
-
-CAMERA_URL = "https://webapp.vosker.com/camera/65d3eca2f63c43f5f0684d8f"
-
-# -------------------------
-# ROOT DIR = GitHub workspace
+# ------------------------
 ROOT_DIR = os.environ.get("GITHUB_WORKSPACE", ".")
 BASE_DIR = os.path.join(ROOT_DIR, "Old-Bald-Skier-Snow-Reports", "vosker")
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
 GIF_PATH = os.path.join(BASE_DIR, "vosker_timelapse.gif")
-# -------------------------
 
-MAX_IMAGES = 100
-GIF_LENGTH_SECONDS = 7
-
-# =========================
-# SETUP
-# =========================
-os.makedirs(BASE_DIR, exist_ok=True)
+# Make sure the directories exist
 os.makedirs(IMAGE_DIR, exist_ok=True)
-print(f"Created directories: {BASE_DIR} and {IMAGE_DIR}")
+print(f"Directory confirmed/created: {IMAGE_DIR}")
 
-# =========================
-# CHROME OPTIONS
-# =========================
-options = webdriver.ChromeOptions()
-options.add_argument("--headless=new")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
+# Replace these URLs with your actual Vosker image URLs
+IMAGE_URLS = [
+    "https://via.placeholder.com/300x200.png?text=1",
+    "https://via.placeholder.com/300x200.png?text=2",
+    "https://via.placeholder.com/300x200.png?text=3",
+]
 
-driver = webdriver.Chrome(
-    service=Service(ChromeDriverManager().install()),
-    options=options
-)
-
-# =========================
-# LOGIN
-# =========================
-driver.get("https://webapp.vosker.com/login")
-time.sleep(3)
-
-driver.find_element(By.ID, "email").send_keys(EMAIL)
-driver.find_element(By.ID, "password").send_keys(PASSWORD + Keys.RETURN)
-
-time.sleep(8)
-
-# =========================
-# OPEN CAMERA
-# =========================
-driver.get(CAMERA_URL)
-time.sleep(6)
-
-# =========================
-# COLLECT IMAGES
-# =========================
-image_urls = []
-scroll_attempts = 0
-MAX_SCROLLS = 50
-
-while len(image_urls) < MAX_IMAGES and scroll_attempts < MAX_SCROLLS:
-    images = driver.find_elements(By.XPATH, "//img[contains(@src, '.jpg')]")
-    for img in images:
-        src = img.get_attribute("src")
-        if src and src not in image_urls:
-            image_urls.append(src)
-            if len(image_urls) >= MAX_IMAGES:
-                break
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(2)
-    scroll_attempts += 1
-
-print(f"Collected {len(image_urls)} image URLs")
-
-# =========================
+# ------------------------
 # DOWNLOAD IMAGES
-# =========================
-downloaded = []
-for i, url in enumerate(image_urls):
+# ------------------------
+downloaded_files = []
+
+for i, url in enumerate(IMAGE_URLS):
     try:
-        r = requests.get(url, timeout=10)
-        if r.status_code == 200:
-            path = os.path.join(IMAGE_DIR, f"{i:03d}.jpg")
-            with open(path, "wb") as f:
-                f.write(r.content)
-            downloaded.append(path)
-            print(f"Downloaded {path}")
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            file_path = os.path.join(IMAGE_DIR, f"{i:03d}.jpg")
+            with open(file_path, "wb") as f:
+                f.write(response.content)
+            downloaded_files.append(file_path)
+            print(f"Downloaded image: {file_path}")
+        else:
+            print(f"Failed to download {url}, status: {response.status_code}")
     except Exception as e:
-        print(f"Download failed: {e}")
+        print(f"Error downloading {url}: {e}")
 
-driver.quit()
-
-# =========================
+# ------------------------
 # CREATE GIF
-# =========================
-if not downloaded:
-    print("No images downloaded — aborting")
-    sys.exit(1)
+# ------------------------
+if not downloaded_files:
+    print("No images downloaded — cannot create GIF")
+    exit(1)
 
-frames = [Image.open(img).convert("RGB") for img in downloaded]
-frame_duration_ms = int((GIF_LENGTH_SECONDS / len(frames)) * 1000)
+frames = [Image.open(f).convert("RGB") for f in downloaded_files]
+frame_duration_ms = 1000  # 1 second per frame, adjust as needed
 
 frames[0].save(
     GIF_PATH,
@@ -134,9 +60,5 @@ frames[0].save(
 )
 
 print(f"✅ GIF created successfully: {GIF_PATH}")
-print("Files in vosker folder:", os.listdir(BASE_DIR))
-
-
-print(f"✅ GIF created successfully: {GIF_PATH}")
-print("Files in vosker folder:", os.listdir(BASE_DIR))
+print("Files in vosker directory:", os.listdir(BASE_DIR))
 
