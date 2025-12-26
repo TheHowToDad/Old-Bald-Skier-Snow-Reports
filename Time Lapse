@@ -27,13 +27,11 @@ PASSWORD = os.environ["VOSKER_PASSWORD"]
 
 CAMERA_URL = "https://webapp.vosker.com/camera/65d3eca2f63c43f5f0684d8f"
 
-# -------------------------
-# ROOT FOLDER OF YOUR REPO
-ROOT_DIR = "Old-Bald-Skier-Snow-Reports"
-BASE_DIR = os.path.join(ROOT_DIR, "vosker")
+# Root folder for GitHub Actions
+ROOT_DIR = os.environ.get("GITHUB_WORKSPACE", ".")
+BASE_DIR = os.path.join(ROOT_DIR, "Old-Bald-Skier-Snow-Reports", "vosker")
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
 GIF_PATH = os.path.join(BASE_DIR, "vosker_timelapse.gif")
-# -------------------------
 
 MAX_IMAGES = 100
 GIF_LENGTH_SECONDS = 7
@@ -43,6 +41,7 @@ GIF_LENGTH_SECONDS = 7
 # =========================
 os.makedirs(BASE_DIR, exist_ok=True)
 os.makedirs(IMAGE_DIR, exist_ok=True)
+print(f"Created directories: {BASE_DIR} and {IMAGE_DIR}")
 
 # =========================
 # CHROME OPTIONS
@@ -87,14 +86,13 @@ while len(image_urls) < MAX_IMAGES and scroll_attempts < MAX_SCROLLS:
         src = img.get_attribute("src")
         if src and src not in image_urls:
             image_urls.append(src)
-            print(f"Collected {len(image_urls)} images")
             if len(image_urls) >= MAX_IMAGES:
                 break
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     time.sleep(2)
     scroll_attempts += 1
 
-print(f"Final image count: {len(image_urls)}")
+print(f"Collected {len(image_urls)} image URLs")
 
 # =========================
 # DOWNLOAD IMAGES
@@ -132,6 +130,9 @@ frames[0].save(
     loop=0,
     optimize=True
 )
+
+print(f"✅ GIF created successfully: {GIF_PATH}")
+print("Files in vosker folder:", os.listdir(BASE_DIR))
 
 print(f"✅ GIF created successfully: {GIF_PATH}")
 print("Files in vosker folder:", os.listdir(BASE_DIR))
