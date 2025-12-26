@@ -27,9 +27,13 @@ PASSWORD = os.environ["VOSKER_PASSWORD"]
 
 CAMERA_URL = "https://webapp.vosker.com/camera/65d3eca2f63c43f5f0684d8f"
 
-BASE_DIR = "vosker"
+# -------------------------
+# ROOT FOLDER OF YOUR REPO
+ROOT_DIR = "Old-Bald-Skier-Snow-Reports"
+BASE_DIR = os.path.join(ROOT_DIR, "vosker")
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
 GIF_PATH = os.path.join(BASE_DIR, "vosker_timelapse.gif")
+# -------------------------
 
 MAX_IMAGES = 100
 GIF_LENGTH_SECONDS = 7
@@ -131,3 +135,4 @@ frames[0].save(
 
 print(f"✅ GIF created successfully: {GIF_PATH}")
 print("Files in vosker folder:", os.listdir(BASE_DIR))
+
