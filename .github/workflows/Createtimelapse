@@ -21,17 +21,23 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run Vosker script
+    - name: Run Vosker timelapse script
       env:
         VOSKER_EMAIL: ${{ secrets.VOSKER_EMAIL }}
         VOSKER_PASSWORD: ${{ secrets.VOSKER_PASSWORD }}
+        GITHUB_WORKSPACE: ${{ github.workspace }}
       run: |
         python vosker_timelapse.py
+
+    - name: Debug repo contents
+      run: |
+        echo "Repo contents after script:"
+        ls -R Old-Bald-Skier-Snow-Reports
 
     - name: Commit generated GIF
       run: |
         git config user.name "github-actions"
         git config user.email "actions@github.com"
-        git add vosker/vosker_timelapse.gif || echo "Nothing to add"
-        git commit -m "Update Vosker timelapse GIF" || echo "No changes"
+        git add Old-Bald-Skier-Snow-Reports/vosker/
+        git commit -m "Update Vosker timelapse GIF" || echo "No changes to commit"
         git push
