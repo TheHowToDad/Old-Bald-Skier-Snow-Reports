@@ -2,62 +2,49 @@ import os
 import requests
 from PIL import Image
 
-# ------------------------
-# CONFIG
-# ------------------------
-# Root directory in GitHub Actions or local
+# Paths
 ROOT_DIR = os.environ.get("GITHUB_WORKSPACE", ".")
-BASE_DIR = os.path.join(ROOT_DIR, "Old-Bald-Skier-Snow-Reports", "vosker")
+BASE_DIR = os.path.join(ROOT_DIR, "vosker")
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
 GIF_PATH = os.path.join(BASE_DIR, "vosker_timelapse.gif")
 
-# Ensure directories exist
+# Make directories
 os.makedirs(IMAGE_DIR, exist_ok=True)
-print(f"Directory confirmed/created: {IMAGE_DIR}")
 
 # Replace with your actual Vosker image URLs
 IMAGE_URLS = [
-    "https://via.placeholder.com/300x200.png?text=1",
-    "https://via.placeholder.com/300x200.png?text=2",
-    "https://via.placeholder.com/300x200.png?text=3",
+    "https://webapp.vosker.com/media/...1.jpg",
+    "https://webapp.vosker.com/media/...2.jpg",
+    "https://webapp.vosker.com/media/...3.jpg",
 ]
 
-# ------------------------
-# DOWNLOAD IMAGES
-# ------------------------
 downloaded_files = []
+
 for i, url in enumerate(IMAGE_URLS):
     try:
         r = requests.get(url, timeout=10)
-        if r.status_code == 200:
-            file_path = os.path.join(IMAGE_DIR, f"{i:03d}.jpg")
-            with open(file_path, "wb") as f:
-                f.write(r.content)
-            downloaded_files.append(file_path)
-            print(f"Downloaded image: {file_path}")
-        else:
-            print(f"Failed to download {url}, status: {r.status_code}")
+        r.raise_for_status()
+        path = os.path.join(IMAGE_DIR, f"{i:03d}.jpg")
+        with open(path, "wb") as f:
+            f.write(r.content)
+        downloaded_files.append(path)
+        print(f"Downloaded {path}")
     except Exception as e:
-        print(f"Error downloading {url}: {e}")
+        print(f"Failed {url}: {e}")
 
-# ------------------------
-# CREATE GIF
-# ------------------------
 if not downloaded_files:
-    print("No images downloaded — cannot create GIF")
+    print("No images downloaded, GIF cannot be created")
     exit(1)
 
+# Create GIF
 frames = [Image.open(f).convert("RGB") for f in downloaded_files]
-frame_duration_ms = 1000  # 1 second per frame
-
 frames[0].save(
     GIF_PATH,
     save_all=True,
     append_images=frames[1:],
-    duration=frame_duration_ms,
+    duration=1000,
     loop=0,
     optimize=True
 )
 
-print(f"✅ GIF created successfully: {GIF_PATH}")
-print("Files in vosker directory:", os.listdir(BASE_DIR))
+print(f"✅ GIF created at {GIF_PATH}")
