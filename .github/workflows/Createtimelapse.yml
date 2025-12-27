@@ -8,24 +8,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-    - name: Install dependencies
-      run: pip install pillow requests
+      - name: Install dependencies
+        run: pip install pillow requests
 
-    - name: Run Vosker timelapse script
-      run: python Old-Bald-Skier-Snow-Reports/vosker_timelapse.py
+      - name: Run timelapse script
+        run: python vosker_timelapse.py
 
-    - name: Commit GIF to repo
-      run: |
-        git config user.name "github-actions"
-        git config user.email "actions@github.com"
-        git add Old-Bald-Skier-Snow-Reports/vosker/
-        git commit -m "Update Vosker timelapse GIF" || echo "No changes"
-        git push
+      - name: Commit GIF back to repo
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add vosker/
+          git commit -m "Update Vosker timelapse GIF" || echo "No changes to commit"
+          git push
