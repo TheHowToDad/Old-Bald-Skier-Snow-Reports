@@ -13,9 +13,6 @@ VOSKER_DIR = os.path.join(ROOT, "vosker")
 IMAGE_DIR = os.path.join(VOSKER_DIR, "images")
 GIF_PATH = os.path.join(VOSKER_DIR, "vosker_timelapse.gif")
 
-# =========================
-# FORCE DIRECTORY CREATION
-# =========================
 os.makedirs(IMAGE_DIR, exist_ok=True)
 
 print("Repo root:", ROOT)
@@ -23,13 +20,19 @@ print("Vosker dir:", VOSKER_DIR)
 print("Image dir:", IMAGE_DIR)
 
 # =========================
-# TEST IMAGE URLS
-# (Replace later with Vosker URLs)
+# HEADERS (FIX 403)
+# =========================
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (compatible; VoskerTimelapse/1.0)"
+}
+
+# =========================
+# TEST IMAGE URLS (403-SAFE)
 # =========================
 IMAGE_URLS = [
-    "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png",
+    "https://picsum.photos/640/360",
+    "https://picsum.photos/640/361",
+    "https://picsum.photos/640/362",
 ]
 
 valid_images = []
@@ -39,7 +42,7 @@ valid_images = []
 # =========================
 for i, url in enumerate(IMAGE_URLS):
     try:
-        r = requests.get(url, timeout=20)
+        r = requests.get(url, headers=HEADERS, timeout=20)
         r.raise_for_status()
 
         img = Image.open(BytesIO(r.content))
@@ -73,3 +76,4 @@ frames[0].save(
 )
 
 print("GIF CREATED:", GIF_PATH)
+
