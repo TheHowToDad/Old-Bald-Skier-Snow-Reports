@@ -16,22 +16,23 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install pillow requests
+        run: |
+          pip install pillow requests
 
       - name: Run timelapse script
-        run: python vosker_timelapse.py
-
-      - name: Verify files exist
         run: |
-          echo "FILES CREATED:"
-          ls -R vosker || exit 1
+          python vosker_timelapse.py
+
+      - name: Verify output exists
+        run: |
+          test -f vosker/vosker_timelapse.gif
+          ls -R vosker
 
       - name: Commit and push GIF
         run: |
-          git status
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add vosker
