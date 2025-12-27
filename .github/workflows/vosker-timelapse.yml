@@ -1,0 +1,39 @@
+name: Vosker Timelapse
+
+on:
+  workflow_dispatch:
+
+jobs:
+  timelapse:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pillow requests
+
+      - name: Run timelapse script
+        run: python vosker_timelapse.py
+
+      - name: Verify files exist
+        run: |
+          echo "FILES CREATED:"
+          ls -R vosker || exit 1
+
+      - name: Commit and push GIF
+        run: |
+          git status
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add vosker
+          git commit -m "Add Vosker timelapse GIF" || exit 1
+          git push
