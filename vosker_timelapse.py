@@ -1,22 +1,8 @@
-import os
 import sys
+import os
 import time
 import subprocess
-from pathlib import Path
-
-# =========================
-# AUTO-INSTALL
-# =========================
-def ensure(pkg):
-    try:
-        __import__(pkg)
-    except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", pkg])
-
-ensure("PIL")
-ensure("selenium")
-ensure("webdriver_manager")
-
+import requests
 from PIL import Image
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -27,98 +13,119 @@ from webdriver_manager.chrome import ChromeDriverManager
 # =========================
 # CONFIG
 # =========================
-EMAIL = os.environ["VOSKER_EMAIL"]
-PASSWORD = os.environ["VOSKER_PASSWORD"]
-
+EMAIL = "sendtoblake@gmail.com"
+PASSWORD = "1Keepitreal!"
 CAMERA_URL = "https://webapp.vosker.com/camera/65d3eca2f63c43f5f0684d8f"
 
 MAX_IMAGES = 100
-GIF_LENGTH_SECONDS = 7
+GIF_SECONDS = 7
 
-BASE_DIR = Path("vosker")
-IMAGE_DIR = BASE_DIR / "images"
-GIF_PATH = BASE_DIR / "vosker_timelapse.gif"
-
-IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+REPO_ROOT = os.getcwd()
+VOSKER_DIR = os.path.join(REPO_ROOT, "vosker")
+IMAGE_DIR = os.path.join(VOSKER_DIR, "images")
+GIF_PATH = os.path.join(VOSKER_DIR, "vosker_timelapse.gif")
 
 # =========================
-# BROWSER
+# FORCE DIRECTORIES
+# =========================
+os.makedirs(IMAGE_DIR, exist_ok=True)
+print("Vosker dir:", VOSKER_DIR)
+
+# =========================
+# SELENIUM LOGIN
 # =========================
 options = webdriver.ChromeOptions()
-options.add_argument("--headless=new")
-options.add_argument("--window-size=1920,1080")
-options.add_argument("--disable-gpu")
+options.add_argument("--disable-blink-features=AutomationControlled")
 
 driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()),
     options=options
 )
 
-# =========================
-# LOGIN
-# =========================
 driver.get("https://webapp.vosker.com/login")
-time.sleep(4)
+time.sleep(3)
 
 driver.find_element(By.ID, "email").send_keys(EMAIL)
 driver.find_element(By.ID, "password").send_keys(PASSWORD + Keys.RETURN)
+time.sleep(8)
 
+driver.get(CAMERA_URL)
 time.sleep(8)
 
 # =========================
-# CAMERA PAGE
+# SCROLL TO LOAD HISTORY
 # =========================
-driver.get(CAMERA_URL)
-time.sleep(6)
-
-# =========================
-# FORCE LOAD HISTORY
-# =========================
-for _ in range(18):
+for _ in range(15):
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(2)
+    time.sleep(1.5)
 
 # =========================
-# FIND IMAGE CONTAINERS
+# COLLECT IMAGE URLS
 # =========================
-tiles = driver.find_elements(
-    By.XPATH,
-    "//img | //div[contains(@class,'image')]"
-)
+imgs = driver.find_elements(By.XPATH, "//img")
+image_urls = []
 
-print(f"Found {len(tiles)} possible image elements")
+for img in imgs:
+    src = img.get_attribute("src")
+    if src and "vosker" in src and src.startswith("http"):
+        if src not in image_urls:
+            image_urls.append(src)
 
-saved = []
+image_urls = image_urls[-MAX_IMAGES:]
+print(f"Found {len(image_urls)} Vosker images")
 
-for i, el in enumerate(tiles[:MAX_IMAGES]):
-    try:
-        path = IMAGE_DIR / f"{i:03d}.png"
-        el.screenshot(str(path))
-        saved.append(path)
-        print(f"Captured {path}")
-    except Exception:
-        continue
+if len(image_urls) < 2:
+    print("ERROR: Not enough images")
+    driver.quit()
+    sys.exit(1)
+
+# =========================
+# TRANSFER COOKIES
+# =========================
+session = requests.Session()
+for cookie in driver.get_cookies():
+    session.cookies.set(cookie["name"], cookie["value"])
 
 driver.quit()
 
 # =========================
-# GIF CREATION
+# DOWNLOAD IMAGES (AUTHENTICATED)
 # =========================
-if len(saved) < 2:
-    print("ERROR: Not enough valid images")
+downloaded = []
+
+for i, url in enumerate(image_urls):
+    try:
+        r = session.get(url, timeout=15)
+        r.raise_for_status()
+
+        path = os.path.join(IMAGE_DIR, f"{i:03d}.jpg")
+        with open(path, "wb") as f:
+            f.write(r.content)
+
+        Image.open(path).verify()  # HARD VALIDATION
+        downloaded.append(path)
+        print("Downloaded", path)
+
+    except Exception as e:
+        print("Skipped", url, e)
+
+if len(downloaded) < 2:
+    print("ERROR: No valid images downloaded")
     sys.exit(1)
 
-frames = [Image.open(p).convert("RGB") for p in saved]
-
-duration_ms = int((GIF_LENGTH_SECONDS / len(frames)) * 1000)
+# =========================
+# CREATE GIF
+# =========================
+frames = [Image.open(p).convert("RGB") for p in downloaded]
+frame_ms = int((GIF_SECONDS / len(frames)) * 1000)
 
 frames[0].save(
     GIF_PATH,
     save_all=True,
     append_images=frames[1:],
-    duration=duration_ms,
-    loop=0,
-    optimize=True
+    duration=frame_ms,
+    loop=0
 )
 
-print(f"✅ Vosker timelapse created: {GIF_PATH}")
+print("✅ GIF CREATED:", GIF_PATH)
+
