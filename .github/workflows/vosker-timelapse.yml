@@ -2,16 +2,15 @@ name: Vosker Timelapse
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
 
 jobs:
-  timelapse:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: true
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -20,21 +19,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pillow requests
+          pip install pillow selenium webdriver-manager
 
-      - name: Run timelapse script
+      - name: Run Vosker timelapse
+        env:
+          VOSKER_EMAIL: ${{ secrets.VOSKER_EMAIL }}
+          VOSKER_PASSWORD: ${{ secrets.VOSKER_PASSWORD }}
         run: |
           python vosker_timelapse.py
 
-      - name: Verify output exists
-        run: |
-          test -f vosker/vosker_timelapse.gif
-          ls -R vosker
-
-      - name: Commit and push GIF
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add vosker
-          git commit -m "Add Vosker timelapse GIF" || exit 1
-          git push
+      - name: Upload GIF
+        uses: actions/upload-artifact@v4
+        with:
+          name: vosker-timelapse
+          path: vosker/vosker_timelapse.gif
