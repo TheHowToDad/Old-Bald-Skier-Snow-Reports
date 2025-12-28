@@ -5,7 +5,7 @@ import subprocess
 from pathlib import Path
 
 # =========================
-# AUTO-INSTALL DEPENDENCIES
+# AUTO-INSTALL
 # =========================
 def ensure(pkg):
     try:
@@ -25,7 +25,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 # =========================
-# CONFIG (NO HARDCODED SECRETS)
+# CONFIG
 # =========================
 EMAIL = os.environ["VOSKER_EMAIL"]
 PASSWORD = os.environ["VOSKER_PASSWORD"]
@@ -42,12 +42,12 @@ GIF_PATH = BASE_DIR / "vosker_timelapse.gif"
 IMAGE_DIR.mkdir(parents=True, exist_ok=True)
 
 # =========================
-# SELENIUM SETUP
+# BROWSER
 # =========================
 options = webdriver.ChromeOptions()
 options.add_argument("--headless=new")
-options.add_argument("--disable-gpu")
 options.add_argument("--window-size=1920,1080")
+options.add_argument("--disable-gpu")
 
 driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()),
@@ -62,79 +62,53 @@ time.sleep(4)
 
 driver.find_element(By.ID, "email").send_keys(EMAIL)
 driver.find_element(By.ID, "password").send_keys(PASSWORD + Keys.RETURN)
+
 time.sleep(8)
 
 # =========================
-# OPEN CAMERA PAGE
+# CAMERA PAGE
 # =========================
 driver.get(CAMERA_URL)
 time.sleep(6)
 
 # =========================
-# LOAD IMAGE HISTORY
+# FORCE LOAD HISTORY
 # =========================
-for _ in range(15):
+for _ in range(18):
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     time.sleep(2)
 
 # =========================
-# COLLECT IMAGE ELEMENTS
+# FIND IMAGE CONTAINERS
 # =========================
-imgs = driver.find_elements(By.XPATH, "//img[contains(@src, '.jpg')]")
+tiles = driver.find_elements(
+    By.XPATH,
+    "//img | //div[contains(@class,'image')]"
+)
 
-srcs = []
-for img in imgs:
-    src = img.get_attribute("src")
-    if src and "vosker" in src:
-        srcs.append(src)
+print(f"Found {len(tiles)} possible image elements")
 
-# newest → oldest → reverse to chronological
-srcs = list(dict.fromkeys(srcs))[:MAX_IMAGES]
-srcs.reverse()
+saved = []
 
-print(f"Found {len(srcs)} authenticated Vosker images")
-
-# =========================
-# DOWNLOAD VIA BROWSER SESSION
-# =========================
-downloaded = []
-
-for i, url in enumerate(srcs):
-    driver.execute_script(f"""
-        var img = document.createElement('img');
-        img.src = "{url}";
-        img.onload = function() {{
-            var canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            canvas.getContext('2d').drawImage(img, 0, 0);
-            var data = canvas.toDataURL('image/jpeg').split(',')[1];
-            window.saveImage = data;
-        }};
-    """)
-    time.sleep(1)
-
-    data = driver.execute_script("return window.saveImage;")
-    if not data:
+for i, el in enumerate(tiles[:MAX_IMAGES]):
+    try:
+        path = IMAGE_DIR / f"{i:03d}.png"
+        el.screenshot(str(path))
+        saved.append(path)
+        print(f"Captured {path}")
+    except Exception:
         continue
-
-    path = IMAGE_DIR / f"{i:03d}.jpg"
-    with open(path, "wb") as f:
-        f.write(bytes.fromhex(data.encode("utf-8").hex()))
-
-    downloaded.append(path)
-    print(f"Saved {path}")
 
 driver.quit()
 
 # =========================
-# CREATE GIF
+# GIF CREATION
 # =========================
-if len(downloaded) < 2:
+if len(saved) < 2:
     print("ERROR: Not enough valid images")
     sys.exit(1)
 
-frames = [Image.open(p).convert("RGB") for p in downloaded]
+frames = [Image.open(p).convert("RGB") for p in saved]
 
 duration_ms = int((GIF_LENGTH_SECONDS / len(frames)) * 1000)
 
@@ -147,4 +121,4 @@ frames[0].save(
     optimize=True
 )
 
-print(f"✅ GIF CREATED: {GIF_PATH}")
+print(f"✅ Vosker timelapse created: {GIF_PATH}")
