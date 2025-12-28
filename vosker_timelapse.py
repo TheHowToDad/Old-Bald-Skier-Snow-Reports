@@ -1,7 +1,6 @@
-import sys
 import os
+import sys
 import time
-import subprocess
 import requests
 from PIL import Image
 from selenium import webdriver
@@ -29,21 +28,29 @@ GIF_PATH = os.path.join(VOSKER_DIR, "vosker_timelapse.gif")
 # FORCE DIRECTORIES
 # =========================
 os.makedirs(IMAGE_DIR, exist_ok=True)
+print("Repo root:", REPO_ROOT)
 print("Vosker dir:", VOSKER_DIR)
 
 # =========================
-# SELENIUM LOGIN
+# CHROME OPTIONS (FIX)
 # =========================
 options = webdriver.ChromeOptions()
-options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_argument("--headless=new")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--disable-gpu")
+options.add_argument("--window-size=1920,1080")
 
 driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()),
     options=options
 )
 
+# =========================
+# LOGIN
+# =========================
 driver.get("https://webapp.vosker.com/login")
-time.sleep(3)
+time.sleep(5)
 
 driver.find_element(By.ID, "email").send_keys(EMAIL)
 driver.find_element(By.ID, "password").send_keys(PASSWORD + Keys.RETURN)
@@ -53,11 +60,11 @@ driver.get(CAMERA_URL)
 time.sleep(8)
 
 # =========================
-# SCROLL TO LOAD HISTORY
+# LOAD IMAGE HISTORY
 # =========================
 for _ in range(15):
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(1.5)
+    time.sleep(1.2)
 
 # =========================
 # COLLECT IMAGE URLS
@@ -67,7 +74,7 @@ image_urls = []
 
 for img in imgs:
     src = img.get_attribute("src")
-    if src and "vosker" in src and src.startswith("http"):
+    if src and src.startswith("http") and "vosker" in src:
         if src not in image_urls:
             image_urls.append(src)
 
@@ -80,7 +87,7 @@ if len(image_urls) < 2:
     sys.exit(1)
 
 # =========================
-# TRANSFER COOKIES
+# COPY AUTH COOKIES
 # =========================
 session = requests.Session()
 for cookie in driver.get_cookies():
@@ -89,7 +96,7 @@ for cookie in driver.get_cookies():
 driver.quit()
 
 # =========================
-# DOWNLOAD IMAGES (AUTHENTICATED)
+# DOWNLOAD IMAGES
 # =========================
 downloaded = []
 
@@ -102,12 +109,12 @@ for i, url in enumerate(image_urls):
         with open(path, "wb") as f:
             f.write(r.content)
 
-        Image.open(path).verify()  # HARD VALIDATION
+        Image.open(path).verify()
         downloaded.append(path)
-        print("Downloaded", path)
+        print("Downloaded:", path)
 
     except Exception as e:
-        print("Skipped", url, e)
+        print("Skipped:", url, e)
 
 if len(downloaded) < 2:
     print("ERROR: No valid images downloaded")
@@ -128,4 +135,5 @@ frames[0].save(
 )
 
 print("✅ GIF CREATED:", GIF_PATH)
+
 
