@@ -3,7 +3,6 @@ name: Update Vosker Image
 on:
   schedule:
   - cron: '0 * * * *'
-  - cron: '15 * * * *'
   - cron: '30 * * * *'
   - cron: '45 * * * *'
   - cron: '*/15 * * * *'  # Runs every hour
